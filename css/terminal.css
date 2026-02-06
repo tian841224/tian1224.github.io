@@ -224,15 +224,32 @@ body {
     font-weight: 500;
 }
 
-/* Motto 標語樣式 */
+/* Motto 標語樣式 - 手機版優先 (Mobile First) */
 .motto {
-    font-size: 2.75rem;
+    font-size: 1.5rem;
+    /* 手機版縮小字體以確保單行 */
     font-weight: 700;
     color: #fff;
     text-align: center;
     letter-spacing: 2px;
-    margin: 2rem 0;
+    margin: 1.5rem 0;
     text-shadow: 0 0 20px rgba(122, 156, 255, 0.5);
+}
+
+/* 平板版 (Tablet) */
+@media (min-width: 481px) {
+    .motto {
+        font-size: 2rem;
+        margin: 1.75rem 0;
+    }
+}
+
+/* 中大型螢幕 (1080p / Laptop) */
+@media (min-width: 769px) {
+    .motto {
+        font-size: 2.5rem;
+        margin: 2rem 0;
+    }
 }
 
 /* Text Styling - 增加配色 */
@@ -486,7 +503,7 @@ html {
 
     .motto {
         font-size: 3rem;
-        /* 從 2.75rem 提升 */
+        /* 維持桌面版大氣視覺效果 */
     }
 
     .highlight {
