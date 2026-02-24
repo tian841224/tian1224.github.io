@@ -30,9 +30,13 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="css/terminal.css">
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 
 <body>
+    <!-- 3D 背景畫布 -->
+    <canvas id="three-canvas"></canvas>
     <!-- 整個網站就是一個大的終端機視窗 -->
     <div class="terminal-container">
         <!-- Terminal Header -->
@@ -145,9 +149,9 @@
                             <div class="output-line"><span class="key">exit</span></div>
                         </div>
                     </div>
-                    <div class="output-line">當腳本執行、遊戲再次開啟後，看著 FPS 從原本遲滯的 30 左右提升到流暢的 50+，</div>
+                    <div class="output-line">當腳本執行、遊戲再次開啟後，看著 FPS 從 30 左右提升到 50+，</div>
                     <div class="output-line">那種「僅僅幾行程式碼就能讓體驗大幅改善」的衝擊感，</div>
-                    <div class="output-line">加上即刻驗證後的強烈回饋，讓我獲得了前所未有的成就感。</div>
+                    <div class="output-line">加上能馬上看到成果的回饋，讓我獲得了前所未有的成就感。</div>
                     <div class="output-line blank"></div>
                     <div class="output-line">自此，我便慢慢踏入了 Coding 的這條「不歸路」，</div>
                     <div class="output-line">這份對技術的純粹熱忱延續至今。</div>
@@ -170,12 +174,45 @@
                     <div class="output-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
                     <div class="output-line blank"></div>
 
-                    <div class="output-line"><span class="subtitle">▸ 核心成就</span></div>
-                    <div class="output-line"> • <span class="key">效能優化</span> - 主導高流量訊息系統重構,成功將系統效能提升 10 倍</div>
-                    <div class="output-line"> • <span class="key">架構設計能力</span> - 從零建構微服務架構系統,實踐 Clean Architecture 原則
+                    <div class="output-line section-label"><span class="subtitle">▸ 核心成就</span></div>
+                    <div class="achievement-group">
+                        <details class="achievement-item">
+                            <summary class="output-line"> • <span class="key">效能優化</span> - 主導高流量訊息系統重構,成功將系統效能提升 10 倍
+                                <span class="toggle-hint">[detail]</span>
+                            </summary>
+                            <div class="achievement-detail">
+                                <div class="output-line info indent">分析現有系統瓶頸，針對資料庫查詢、快取策略進行深度重構。</div>
+                                <div class="output-line info indent">導入分散式系統架構，有效分流流量壓力，確保高負載下的系統穩定性。</div>
+                            </div>
+                        </details>
+                        <details class="achievement-item">
+                            <summary class="output-line"> • <span class="key">架構設計能力</span> - 依據專案規模選用合適架構，具備 Clean
+                                Architecture 與 3-tier 的實戰設計經驗 <span class="toggle-hint">[detail]</span></summary>
+                            <div class="achievement-detail">
+                                <div class="output-line info indent">依據專案規模選用架構，小型專案採 3-tier 快速交付，複雜業務導入 Clean
+                                    Architecture，嚴格遵守 SOLID 原則確保模組職責清晰。</div>
+                                <div class="output-line info indent">透過清晰的模組分層與介面抽象，提升開發效率，使系統具備高度的可擴展性與可測試性。</div>
+                            </div>
+                        </details>
+                        <details class="achievement-item">
+                            <summary class="output-line"> • <span class="key">技術債處理</span> - 優化累積多年的 ERP 核心系統,提升程式碼可維護性
+                                <span class="toggle-hint">[detail]</span>
+                            </summary>
+                            <div class="achievement-detail">
+                                <div class="output-line info indent">系統化梳理舊有代碼邏輯，導入現代化開發規範與單元測試。</div>
+                                <div class="output-line info indent">顯著降低系統耦合度，縮短後續新功能開發的交付時間。</div>
+                            </div>
+                        </details>
+                        <details class="achievement-item">
+                            <summary class="output-line"> • <span class="key">DevOps 實踐</span> - 建立完整的 CI/CD
+                                自動化部署流程,提升團隊開發效率 <span class="toggle-hint">[detail]</span></summary>
+                            <div class="achievement-detail">
+                                <div class="output-line info indent">規範團隊 Git Flow 分支流程，建立統一的開發協作規範。</div>
+                                <div class="output-line info indent">實作基於 Docker 的自動化部署流水線，整合 Unit Test 與 Build
+                                    流程，確保每次合併均通過驗證、專案能正確執行。</div>
+                            </div>
+                        </details>
                     </div>
-                    <div class="output-line"> • <span class="key">技術債處理</span> - 優化累積多年的 ERP 核心系統,提升程式碼可維護性</div>
-                    <div class="output-line"> • <span class="key">DevOps 實踐</span> - 建立完整的 CI/CD 自動化部署流程,提升團隊開發效率</div>
                     <div class="output-line blank"></div>
                     <div class="output-line"><span class="info">💡 「成就感來自於學習」- 持續精進技術能力,追求卓越的程式碼品質</span></div>
                     <div class="output-line blank"></div>
@@ -188,15 +225,19 @@
                     <div class="output-line"> 主導舊有會員後台與訊息系統的全面重構,解決高流量場景下的效能瓶頸</div>
                     <div class="output-line blank"></div>
                     <div class="output-line"> <span class="tech-label">技術亮點:</span></div>
-                    <div class="output-line"> • 採用 DTO 轉換、三層式架構各司其職、Interface 降低耦合</div>
-                    <div class="output-line"> • 將同步執行流程改為非同步與多執行緒架構,避免主流程阻塞</div>
-                    <div class="output-line"> • 導入 Redis 取代 Memory Cache,讓多實例服務可共用快取資料</div>
-                    <div class="output-line"> • 重構 RabbitMQ 底層實作,支援非同步處理並提升訊息吞吐量</div>
-                    <div class="output-line"> • 導入 ELK 作為集中式 Log 系統,提升除錯與問題追蹤效率</div>
+                    <div class="output-line"> • 採用 DTO 轉換、三層式架構各司其職、Interface 降低耦合，並嚴格遵守 SOLID 原則</div>
+                    <div class="output-line"> • 導入 Redis 取代 Memory Cache，讓多實例服務可共用快取資料</div>
+                    <div class="output-line"> • 導入 ELK 作為集中式 Log 系統，提升除錯與問題追蹤效率</div>
+                    <div class="output-line blank"></div>
+                    <div class="output-line"> <span class="tech-label">挑戰與解決方案:</span></div>
+                    <div class="output-line"> • 效能瓶頸難以定位 → 使用EXPLAIN分析資料庫查詢、快取策略與非同步架構，精準定位關鍵路徑瓶頸</div>
+                    <div class="output-line"> • 主流程阻塞影響吞吐量 → 將同步執行流程改為非同步與多執行緒架構，避免主流程阻塞</div>
+                    <div class="output-line"> • 單點吞吐量瓶頸 → 以 RabbitMQ 依訊息類型拆分任務，切分為多組獨立消費者程式並行處理</div>
                     <div class="output-line blank"></div>
                     <div class="output-line"> <span class="success">成果: 效能提升 10x (50-100 TPS → 1000+
                             TPS),系統穩定度大幅提升</span></div>
-                    <div class="output-line"> <span class="tech-label">Tech Stack:</span> Go, Redis, RabbitMQ, ELK,
+                    <div class="output-line"> <span class="tech-label">Tech Stack:</span> Go, MySQL, Redis, RabbitMQ,
+                        ELK,
                         Docker</div>
                     <div class="output-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
                     <div class="output-line blank"></div>
@@ -205,7 +246,7 @@
                     <!-- Project 2: 系統管理後台 -->
                     <div class="output-line"><span class="subtitle">▸ 微服務架構系統管理後台</span></div>
                     <div class="output-line blank"></div>
-                    <div class="output-line"> 從零建構企業級系統管理後台</div>
+                    <div class="output-line"> 從零建構企業級系統管理後台、數據看板</div>
                     <div class="output-line blank"></div>
                     <div class="output-line"> <span class="tech-label">挑戰與解決方案:</span></div>
                     <div class="output-line"> • 安全性要求高 → 實作 JWT + Middleware 雙層驗證，確保 API 安全性</div>
@@ -222,24 +263,43 @@
                     <!-- Project 3: ERP 系統優化 -->
                     <div class="output-line"><span class="subtitle">▸ ERP 核心系統優化與重構</span></div>
                     <div class="output-line blank"></div>
-                    <div class="output-line"> 接手累積 5 年技術債的 ERP 系統，解決效能瓶頸與維護困難問題</div>
+                    <div class="output-line"> 接手累積 5 年技術債的 ERP 系統</div>
                     <div class="output-line blank"></div>
                     <div class="output-line"> <span class="tech-label">挑戰與解決方案:</span></div>
-                    <div class="output-line"> • 核心查詢效能低落 → 重構 Stored Procedure，優化查詢邏輯（索引優化、執行計畫分析、Query
-                        Tuning），效能提升 300%</div>
+                    <div class="output-line"> • 核心查詢效能低落 → 重構 Stored Procedure，優化查詢邏輯（索引優化、執行計畫分析、Query Tuning），效能提升
+                        300%</div>
                     <div class="output-line"> • 資料庫鎖定頻繁 → 解決多重關聯問題，使用 NOWAIT、優化 Cursor，減少 60% 鎖定時間</div>
-                    <div class="output-line"> • 業務邏輯複雜冗餘 → 重構及優化業務邏輯，提升系統反應速度，減少不必要的資源消耗</div>
-                    <div class="output-line"> • 缺乏系統文件 → 深入分析程式碼，建立完整的系統架構與業務流程文件</div>
-                    <div class="output-line"> • 程式碼可維護性差 → 重構關鍵模組，引入設計模式，降低後續維護成本</div>
+                    <div class="output-line"> • MRP 計算邏輯長期錯誤 → 深入分析業務規則並修正判斷邏輯，協助公司有效降低呆滯庫存</div>
+                    <div class="output-line"> • 缺乏系統文件 → 系統化梳理舊有代碼邏輯，建立完整技術文件，確保成員無須長時間摸索即可上手</div>
+                    <div class="output-line"> • 程式碼可維護性差 → 導入現代化開發規範與單元測試，重構關鍵模組，顯著降低系統耦合度</div>
                     <div class="output-line blank"></div>
-                    <div class="output-line"> <span class="success">成果:
-                            成功將系統提升至可維護且能快速維護的狀態，團隊無須長時間摸索即可上手，為後續功能擴展奠定基礎</span></div>
+                    <div class="output-line"> <span class="success">成果: 系統回復可維護狀態，後續功能交付周期顯著縮短，MRP
+                            修正直接改善庫存準確率，減少公司千萬呆滯庫存</span>
+                    </div>
                     <div class="output-line"> <span class="tech-label">Tech Stack:</span> ASP.NET, C#, MS SQL, EF Core,
                         AJAX, JavaScript</div>
                     <div class="output-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
                     <div class="output-line blank"></div>
 
-                    <!-- Project 4: 企業應用系統開發 -->
+                    <!-- Project 4: 數據看板系統 -->
+                    <div class="output-line"><span class="subtitle">▸ 即時數據看板系統</span></div>
+                    <div class="output-line blank"></div>
+                    <div class="output-line"> 採用微服務架構，實作即時資料串流與多端廣播</div>
+                    <div class="output-line blank"></div>
+                    <div class="output-line"> <span class="tech-label">挑戰與解決方案:</span></div>
+                    <div class="output-line"> • 高吞吐量訊息接收 → 使用 RabbitMQ 多 Exchange 並行消費，非同步接收大量即時訊息</div>
+                    <div class="output-line"> • 跨服務傳輸效率低 → 採用 gRPC + Protobuf 取代 JSON，二進位序列化降低 Payload 體積與解析耗時</div>
+                    <div class="output-line"> • 低延遲需求 → 引入 Redis Pub/Sub 廣播機制，各服務獨立訂閱頻道，訊息一次發佈即同步分流，消除服務間點對點傳遞延遲</div>
+                    <div class="output-line"> • 前端即時性需求高 → 廣播服務訂閱 Redis 頻道後立即透過 WebSocket 推送至前端，省去輪詢，達到即時更新</div>
+                    <div class="output-line"> • 即時查詢與歷史查詢並存 → 快取服務即時寫入 Redis 供即時查詢、並批次寫入 PostgreSQL 供歷史資料查詢，減少單一服務負擔</div>
+                    <div class="output-line blank"></div>
+                    <div class="output-line"> <span class="success">成果: </span></div>
+                    <div class="output-line"> <span class="tech-label">Tech Stack:</span> Go, RabbitMQ, gRPC, Redis,
+                        WebSocket, PostgreSQL, Docker</div>
+                    <div class="output-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+                    <div class="output-line blank"></div>
+
+                    <!-- Project 5: 企業應用系統開發 -->
                     <div class="output-line"><span class="subtitle">▸ 企業應用系統開發</span></div>
                     <div class="output-line blank"></div>
                     <div class="output-line"> 從需求了解、業務邏輯分析、系統開發到驗收交付的完整流程，開發多個企業級應用系統</div>
@@ -518,6 +578,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="js/three_animation.js"></script>
     <script src="js/terminal.js"></script>
 </body>
 

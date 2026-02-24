@@ -538,6 +538,7 @@ html {
         /* 從 1.15rem 提升 */
     }
 }
+
 /* Code Window Inside Terminal */
 .code-window {
     background: #0d0d0d;
@@ -549,6 +550,88 @@ html {
     overflow: hidden;
     position: relative;
     font-family: 'Fira Code', monospace;
+}
+
+/* Three.js Background Canvas */
+#three-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.5;
+    /* 進一步提升透明度，確保駭客風格雨滴清晰可見 */
+}
+
+/* Achievement Accordion */
+.section-label {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid rgba(122, 156, 255, 0.25);
+}
+
+.achievement-item {
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    transition: border-left 0.3s ease, background 0.3s ease;
+}
+
+.achievement-item:hover {
+    background: rgba(122, 156, 255, 0.05);
+    border-left-color: rgba(122, 156, 255, 0.3);
+}
+
+.achievement-item summary {
+    list-style: none;
+    /* 移除預設箭頭 */
+    outline: none;
+}
+
+.achievement-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.achievement-item[open] summary {
+    color: #fff;
+}
+
+.achievement-item[open] .toggle-hint {
+    opacity: 0.5;
+}
+
+.toggle-hint {
+    font-size: 0.7rem;
+    color: #666;
+    margin-left: 0.5rem;
+    font-style: italic;
+}
+
+.achievement-detail {
+    padding-left: 1rem;
+    border-left: 1px dashed rgba(122, 156, 255, 0.2);
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    animation: slideDown 0.3s ease-out;
+}
+
+.indent {
+    padding-left: 1.5rem;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .code-window-header {
@@ -572,9 +655,17 @@ html {
     display: block;
 }
 
-.cw-close { background: #ff5f56; }
-.cw-min { background: #ffbd2e; }
-.cw-max { background: #27c93f; }
+.cw-close {
+    background: #ff5f56;
+}
+
+.cw-min {
+    background: #ffbd2e;
+}
+
+.cw-max {
+    background: #27c93f;
+}
 
 .code-window-title {
     font-size: 0.7rem;
