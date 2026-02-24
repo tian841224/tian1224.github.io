@@ -15,12 +15,12 @@
     function resize() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        columns = Math.ceil(canvas.width / fontSize);
+        columns = Math.ceil(canvas.height / fontSize); // 改為以高度計算行數
 
-        // 重新初始化 drops
+        // 重新初始化 drops（每行的 X 起始位置，從畫面右側開始）
         drops = [];
         for (let i = 0; i < columns; i++) {
-            drops[i] = Math.random() * -100;
+            drops[i] = -(Math.random() * (canvas.width / fontSize)); // 從左側外開始
         }
     }
 
@@ -29,7 +29,6 @@
 
     function draw() {
         // 半透明黑色背景，產生殘影效果
-        // 注意：這裡使用非常淡的黑色，讓背景保持透亮
         ctx.fillStyle = 'rgba(10, 10, 10, 0.1)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -40,15 +39,15 @@
             // 隨機取出字元
             const text = characters.charAt(Math.floor(Math.random() * characters.length));
 
-            // 繪製字元
-            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            // 繪製字元（x = drops[i]，y = 行號，從右往左流動）
+            ctx.fillText(text, drops[i] * fontSize, i * fontSize);
 
-            // 如果字元移出畫面，或隨機機率回到頂端
-            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                drops[i] = 0;
+            // 如果字元移出畫面右側，隨機機率從左側重新開始
+            if (drops[i] * fontSize > canvas.width && Math.random() > 0.975) {
+                drops[i] = -Math.ceil(canvas.width / fontSize);
             }
 
-            // 垂直移動
+            // 向右移動
             drops[i]++;
         }
     }
