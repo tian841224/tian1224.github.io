@@ -216,6 +216,10 @@ document.addEventListener('DOMContentLoaded', function () {
         { commandId: 'typing-contact-cmd', contentId: 'contact-content', command: 'cat contact.txt' }
     ];
 
+    // Edge 相容性修正：root 必須設為 scroll container (.terminal-body)
+    // 若 root 不設定，預設為 document viewport，但捲軸在 .terminal-body 上
+    // Edge 嚴格遵守規範，sections 相對 viewport 永遠不可見 → 動畫永不觸發
+    const observerRoot = terminalBody || null;
     const sectionObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting && !entry.target.dataset.animated) {
@@ -228,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
-    }, { threshold: 0.1 });
+    }, { root: observerRoot, threshold: 0.05, rootMargin: '0px 0px -10% 0px' });
 
     sectionConfigs.forEach(config => {
         const element = document.getElementById(config.contentId);
