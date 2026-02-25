@@ -204,6 +204,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 updateLineCache();
             }, index * 80);
         });
+
+        // 若此 section 內有 .code-window，計算它前面有幾個 .output-line
+        // 讓視窗在前面的文字出現後才播放開窗動畫
+        const codeWindow = contentElement.querySelector('.code-window');
+        if (codeWindow) {
+            // 找出 code-window 是 lines NodeList 中的第幾個（即大約在哪個時間點）
+            let linesBefore = 0;
+            for (const line of lines) {
+                if (codeWindow.contains(line) || codeWindow === line) break;
+                if (!codeWindow.contains(line)) linesBefore++;
+            }
+            const delay = linesBefore * 80 + 300; // 等前面的行都出現後再額外等 300ms
+            setTimeout(() => {
+                codeWindow.classList.add('is-open');
+            }, delay);
+        }
     }
 
     const sectionConfigs = [

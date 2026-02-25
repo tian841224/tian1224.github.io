@@ -554,6 +554,44 @@ html {
     overflow: hidden;
     position: relative;
     font-family: 'Fira Code', monospace;
+    /* 初始狀態：縮小且透明，等待動畫觸發 */
+    opacity: 0;
+    transform: scale(0.6);
+    transform-origin: top left;
+    transition: none;
+}
+
+/* 視窗從小放大動畫 - macOS 風格彈性展開 */
+@keyframes windowOpen {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    }
+
+    40% {
+        opacity: 1;
+        transform: scale(1.04);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    }
+
+    65% {
+        transform: scale(0.98);
+    }
+
+    80% {
+        transform: scale(1.01);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+}
+
+.code-window.is-open {
+    animation: windowOpen 0.9s cubic-bezier(0.34, 1.20, 0.64, 1) forwards;
 }
 
 /* Three.js Background Canvas */
