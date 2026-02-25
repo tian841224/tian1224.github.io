@@ -35,6 +35,61 @@
 </head>
 
 <body>
+    <!-- 桌面開場動畫覆蓋層 -->
+    <div id="desktop-overlay">
+        <!-- 桌面圖示 -->
+        <div class="desktop-icon" id="cmd-icon" title="雙擊開啟">
+            <div class="desktop-icon-img">
+                <span class="icon-c">C:\</span><span class="icon-cursor">_</span>
+            </div>
+            <div class="desktop-icon-label">portfolio.bat</div>
+        </div>
+
+        <!-- 自動動畫假游標 -->
+        <div id="fake-cursor">
+            <svg width="20" height="22" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1L1 17L5.5 13.5L8.5 20.5L10.5 19.5L7.5 12.5L13 12.5L1 1Z" fill="white" stroke="#333"
+                    stroke-width="1.2" stroke-linejoin="round" />
+            </svg>
+        </div>
+
+        <!-- 雙擊後彈出的迷你 CMD 視窗 -->
+        <div id="mini-cmd-window">
+            <div class="mini-window-header">
+                <div class="mini-window-buttons">
+                    <span class="mw-close"></span>
+                    <span class="mw-min"></span>
+                    <span class="mw-max"></span>
+                </div>
+                <div class="mini-window-title">cmd.exe</div>
+            </div>
+            <div class="mini-window-body">
+                <div class="mw-line"><span class="mw-prompt">Microsoft Windows [Version 10.0]</span></div>
+                <div class="mw-line">
+                    <span class="mw-prompt">C:\Users\tian&gt; </span><span id="mw-cmd-text"></span><span
+                        class="mw-blink" id="mw-cursor">_</span>
+                </div>
+                <div class="mw-line mw-output" id="mw-msg1" style="display:none">Initializing portfolio...</div>
+                <div class="mw-line mw-output" id="mw-msg2" style="display:none">Loading developer profile...</div>
+                <div class="mw-line" id="mw-motto-line" style="display:none">
+                    <span class="mw-prompt">$ </span><span id="mw-motto-cmd"></span><span class="mw-blink"
+                        id="mw-motto-cursor">_</span>
+                </div>
+                <div id="mw-motto-text" style="display:none"></div>
+            </div>
+        </div>
+
+        <!-- 底部工作列 -->
+        <div class="desktop-taskbar">
+            <div class="taskbar-start">
+                <span class="taskbar-win-icon">⊞</span>
+            </div>
+            <div class="taskbar-right">
+                <span class="taskbar-time" id="taskbar-time"></span>
+            </div>
+        </div>
+    </div>
+
     <!-- 3D 背景畫布 -->
     <canvas id="three-canvas"></canvas>
     <!-- 整個網站就是一個大的終端機視窗 -->
@@ -291,7 +346,8 @@
                     <div class="output-line"> • 跨服務傳輸效率低 → 採用 gRPC + Protobuf 取代 JSON，二進位序列化降低 Payload 體積與解析耗時</div>
                     <div class="output-line"> • 低延遲需求 → 引入 Redis Pub/Sub 廣播機制，各服務獨立訂閱頻道，訊息一次發佈即同步分流，消除服務間點對點傳遞延遲</div>
                     <div class="output-line"> • 前端即時性需求高 → 廣播服務訂閱 Redis 頻道後立即透過 WebSocket 推送至前端，省去輪詢，達到即時更新</div>
-                    <div class="output-line"> • 即時查詢與歷史查詢並存 → 快取服務即時寫入 Redis 供即時查詢、並批次寫入 PostgreSQL 供歷史資料查詢，減少單一服務負擔</div>
+                    <div class="output-line"> • 即時查詢與歷史查詢並存 → 快取服務即時寫入 Redis 供即時查詢、並批次寫入 PostgreSQL 供歷史資料查詢，減少單一服務負擔
+                    </div>
                     <div class="output-line blank"></div>
                     <div class="output-line"> <span class="success">成果: </span></div>
                     <div class="output-line"> <span class="tech-label">Tech Stack:</span> Go, RabbitMQ, gRPC, Redis,

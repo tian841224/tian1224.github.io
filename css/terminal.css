@@ -554,44 +554,14 @@ html {
     overflow: hidden;
     position: relative;
     font-family: 'Fira Code', monospace;
-    /* 初始狀態：縮小且透明，等待動畫觸發 */
     opacity: 0;
-    transform: scale(0.6);
-    transform-origin: top left;
-    transition: none;
+    transform: translateY(30px);
+    transition: opacity 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* 視窗從小放大動畫 - macOS 風格彈性展開 */
-@keyframes windowOpen {
-    0% {
-        opacity: 0;
-        transform: scale(0.5);
-        box-shadow: 0 0 0 rgba(0, 0, 0, 0);
-    }
-
-    40% {
-        opacity: 1;
-        transform: scale(1.04);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-    }
-
-    65% {
-        transform: scale(0.98);
-    }
-
-    80% {
-        transform: scale(1.01);
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-    }
-}
-
-.code-window.is-open {
-    animation: windowOpen 0.9s cubic-bezier(0.34, 1.20, 0.64, 1) forwards;
+.code-window.visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Three.js Background Canvas */
@@ -728,4 +698,341 @@ html {
     .code-window {
         max-width: 100%;
     }
+}
+
+/* ===== 桌面開場動畫 ===== */
+
+/* 全螢幕桌面覆蓋層 */
+#desktop-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #0a0f1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+
+#desktop-overlay.fade-out {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* 桌面圖示 */
+.desktop-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    transition: border-color 0.15s, background 0.15s;
+    user-select: none;
+    width: 80px;
+}
+
+.desktop-icon:hover {
+    background: rgba(122, 156, 255, 0.1);
+    border-color: rgba(122, 156, 255, 0.3);
+}
+
+.desktop-icon.selected {
+    background: rgba(122, 156, 255, 0.2);
+    border-color: rgba(122, 156, 255, 0.5);
+}
+
+.desktop-icon-img {
+    width: 52px;
+    height: 52px;
+    background: #0d0d0d;
+    border: 1px solid rgba(122, 156, 255, 0.4);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.65rem;
+    line-height: 1.3;
+    color: #00ff41;
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.15);
+    flex-direction: column;
+    text-align: center;
+    padding: 4px;
+}
+
+.icon-c {
+    color: #7a9cff;
+    font-weight: 700;
+}
+
+.icon-cursor {
+    color: #00ff41;
+    animation: blink 1s infinite;
+}
+
+.desktop-icon-label {
+    font-size: 0.7rem;
+    color: #e6e6e6;
+    text-align: center;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    font-family: 'Fira Code', monospace;
+}
+
+/* 桌面提示文字 */
+#desktop-overlay::after {
+    content: '雙擊圖示開啟終端機';
+    position: absolute;
+    bottom: 4rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Fira Code', monospace;
+    font-size: 0.75rem;
+    color: rgba(122, 156, 255, 0.5);
+    letter-spacing: 2px;
+    animation: hintPulse 2s ease-in-out infinite;
+}
+
+@keyframes hintPulse {
+
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+
+    50% {
+        opacity: 0.9;
+    }
+}
+
+/* 迷你 CMD 視窗 */
+#mini-cmd-window {
+    position: fixed;
+    z-index: 10000;
+    width: 360px;
+    background: #1a1a1a;
+    border: 1px solid rgba(100, 150, 255, 0.3);
+    border-radius: 6px;
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(100, 150, 255, 0.3);
+    font-family: 'Fira Code', monospace;
+    display: none;
+    transform-origin: top left;
+    /* 廣況 position / 尺寸 transition */
+    transition:
+        left 0.65s cubic-bezier(0.4, 0, 0.2, 1),
+        top 0.65s cubic-bezier(0.4, 0, 0.2, 1),
+        width 0.65s cubic-bezier(0.4, 0, 0.2, 1),
+        height 0.65s cubic-bezier(0.4, 0, 0.2, 1),
+        border-radius 0.65s ease;
+}
+
+#mini-cmd-window.appear {
+    display: block;
+    animation: miniWindowAppear 0.35s cubic-bezier(0.34, 1.25, 0.64, 1) forwards;
+}
+
+/* 展開到全螢幕 */
+#mini-cmd-window.expanded {
+    left: 0 !important;
+    top: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    border-radius: 0 !important;
+    box-shadow: none;
+}
+
+@keyframes miniWindowAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.mini-window-header {
+    background: #0d0d0d;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid rgba(100, 150, 255, 0.2);
+    border-radius: 6px 6px 0 0;
+}
+
+.mini-window-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.mini-window-buttons span {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: block;
+}
+
+.mw-close {
+    background: #ff5f56;
+}
+
+.mw-min {
+    background: #ffbd2e;
+}
+
+.mw-max {
+    background: #27c93f;
+}
+
+.mini-window-title {
+    font-size: 0.875rem;
+    color: #666;
+    flex: 1;
+    text-align: center;
+}
+
+.mini-window-body {
+    padding: 2rem;
+    min-height: 80px;
+    background: #1a1a1a;
+}
+
+.mw-line {
+    font-size: 0.75rem;
+    line-height: 1.8;
+}
+
+.mw-prompt {
+    color: #00ff41;
+}
+
+.mw-blink {
+    color: #00ff41;
+    animation: blink 1s infinite;
+}
+
+.mw-output {
+    color: #a8c0ff;
+    padding-left: 0.5rem;
+}
+
+#mw-motto-text {
+    margin-top: 0.75rem;
+    padding-left: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.05em;
+}
+
+/* 工作列 */
+.desktop-taskbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: rgba(10, 15, 26, 0.92);
+    border-top: 1px solid rgba(122, 156, 255, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    z-index: 10001;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+.taskbar-start {
+    display: flex;
+    align-items: center;
+}
+
+.taskbar-win-icon {
+    font-size: 1.1rem;
+    color: #7a9cff;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.taskbar-win-icon:hover {
+    opacity: 1;
+}
+
+.taskbar-right {
+    display: flex;
+    align-items: center;
+}
+
+.taskbar-time {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.72rem;
+    color: #e6e6e6;
+    opacity: 0.85;
+}
+
+/* 手機版調整 */
+@media (max-width: 768px) {
+    #mini-cmd-window {
+        width: 90vw;
+    }
+
+    #desktop-overlay::after {
+        font-size: 0.65rem;
+        bottom: 3.5rem;
+    }
+}
+
+/* ===== 假游標 ===== */
+#fake-cursor {
+    position: fixed;
+    z-index: 10002;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    transition:
+        left 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        top 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        opacity 0.3s ease;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.6));
+}
+
+#fake-cursor svg {
+    display: block;
+    transition: transform 0.1s ease;
+}
+
+#fake-cursor.clicking svg {
+    transform: scale(0.75);
+}
+
+/* 點擊漣漪 */
+#fake-cursor::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(122, 156, 255, 0.35);
+    transform: translate(-50%, -50%) scale(0);
+    transition: none;
+}
+
+#fake-cursor.clicking::after {
+    width: 32px;
+    height: 32px;
+    transform: translate(-50%, -50%) scale(1);
+    transition: width 0.2s ease, height 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+    opacity: 0;
 }
