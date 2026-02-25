@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function () {
         { commandId: 'typing-skills-cmd', contentId: 'skills-content', command: 'ls -la skills/' },
         { commandId: 'typing-experience-cmd', contentId: 'experience-content', command: 'cat projects_experience.md' },
         { commandId: 'typing-projects-cmd', contentId: 'projects-content', command: 'cat opensource_projects.md' },
-        { commandId: 'typing-blog-cmd', contentId: 'blog-content', command: 'ls -l blog/' },
+        { commandId: 'typing-blog-cmd', contentId: 'blog-content', command: 'ls -l note/' },
         { commandId: 'typing-stats-cmd', contentId: 'stats-content', command: 'cat stats.json' },
         { commandId: 'typing-contact-cmd', contentId: 'contact-content', command: 'cat contact.txt' }
     ];
