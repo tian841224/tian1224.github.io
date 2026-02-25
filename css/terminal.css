@@ -371,15 +371,18 @@ body {
 
 @media (max-width: 768px) {
     .terminal-container {
-        margin: 0;
-        border-radius: 0;
-        min-height: 100vh;
+        margin: 1.5rem 1.25rem;
+        border-radius: 10px;
+        min-height: calc(100vh - 3rem);
+        background: rgba(26, 26, 26, 0.88);
+        -webkit-backdrop-filter: blur(4px);
+        backdrop-filter: blur(4px);
     }
 
     .terminal-body {
         padding: 1rem;
         font-size: 0.9rem;
-        max-height: calc(100vh - 4rem);
+        max-height: calc(100vh - 7rem);
     }
 
     .terminal-menu {
