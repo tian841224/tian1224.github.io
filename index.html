@@ -369,6 +369,56 @@
                     <div class="output-line"> <span class="tech-label">Tech Stack:</span> Go, MySQL, Redis, RabbitMQ,
                         ELK,
                         Docker</div>
+                    <div class="achievement-group" style="margin-top: 1rem;">
+                        <details class="achievement-item" id="arch-details">
+                            <summary class="output-line"> <span class="key">▸ 系統架構圖 (Architecture Diagram)</span> <span
+                                    class="toggle-hint">[點擊展開/收合]</span></summary>
+                            <div class="achievement-detail">
+                                <div class="json-output"
+                                    style="font-size: 0.85rem; line-height: 1.3; overflow-x: auto; margin-top: 0.5rem;">
+                                    <pre id="arch-mermaid-src" style="display: none;">
+%%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#1a1a1a', 'primaryTextColor': '#e6e6e6', 'primaryBorderColor': '#7a9cff', 'lineColor': '#a8c0ff', 'secondaryColor': '#0d0d0d', 'tertiaryColor': '#1a1a1a', 'edgeLabelBackground': '#0d0d0d'}, 'flowchart': {'curve': 'stepAfter', 'padding': 15}}}%%
+graph TD
+    External[外部來源 MQ &lt;br/&gt; 高頻即時流 / 常規資料流] -->|&nbsp;&nbsp;&nbsp;接收外部資料&nbsp;&nbsp;&nbsp;| Receiver
+    
+    subgraph ReceiverLayer [接收層]
+        Receiver[外部接收服務]
+        Receiver -->|&nbsp;&nbsp;&nbsp;1: 驗證封包合法性&nbsp;&nbsp;&nbsp;| Valid(驗證通過之封包)
+        Valid -->|&nbsp;&nbsp;&nbsp;2: 寫入緩衝佇列&nbsp;&nbsp;&nbsp;| BufferQ[(內部緩衝 MQ)]
+    end
+
+    BufferQ -->|&nbsp;&nbsp;&nbsp;3: 消費緩衝資料並轉發&nbsp;&nbsp;&nbsp;| Forwarder
+
+    subgraph ForwarderLayer [轉發層]
+        Forwarder[內部轉發服務]
+        Forwarder -->|&nbsp;&nbsp;&nbsp;4: 檢查關聯實體是否存在&nbsp;&nbsp;&nbsp;| CheckExist(實體存在之有效資料)
+        CheckExist -->|&nbsp;&nbsp;&nbsp;5: 依業務屬性分類&nbsp;&nbsp;&nbsp;| DomainQ[(核心業務分類 MQ)]
+    end
+
+    DomainQ -->|&nbsp;&nbsp;&nbsp;6: 事件訂閱與提取&nbsp;&nbsp;&nbsp;| Dispatcher
+
+    subgraph DispatcherLayer [分發路由層]
+        Dispatcher[事件分發服務]
+        Dispatcher -->|&nbsp;&nbsp;&nbsp;7: 判斷資料與業務類型&nbsp;&nbsp;&nbsp;| Router{業務路由}
+        
+        Router -->|基礎資訊更新| Flow1[基礎資訊更新流程]
+        Router -->|狀態進度同步| Flow2[狀態進度同步流程]
+        Router -->|核心數值指標| Flow3[核心指標異動 Stored Procedure]
+    end
+
+    classDef default fill:#1a1a1a,stroke:#7a9cff,stroke-width:1px,color:#e6e6e6;
+    classDef queue fill:#0d0d0d,stroke:#a8c0ff,stroke-width:2px,color:#a8c0ff;
+    classDef decision fill:#1a1a1a,stroke:#ffbd2e,stroke-width:1px,color:#ffbd2e;
+    
+    class BufferQ,DomainQ queue;
+    class Router decision;
+                                    </pre>
+                                    <div id="arch-mermaid-view"></div>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                    <div class="output-line blank"></div>
                     <div class="output-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
                     <div class="output-line blank"></div>
 
@@ -389,6 +439,53 @@
                     <div class="output-line blank"></div>
                     <div class="output-line"> <span class="tech-label">Tech Stack:</span> Go, RabbitMQ, gRPC, Redis,
                         WebSocket, PostgreSQL, Docker</div>
+                    <div class="achievement-group" style="margin-top: 1rem;">
+                        <details class="achievement-item" id="arch-details-dashboard">
+                            <summary class="output-line"> <span class="key">▸ 系統架構圖 (Architecture Diagram)</span> <span
+                                    class="toggle-hint">[點擊展開/收合]</span></summary>
+                            <div class="achievement-detail">
+                                <div class="json-output"
+                                    style="font-size: 0.85rem; line-height: 1.3; overflow-x: auto; margin-top: 0.5rem;">
+                                    <pre id="arch-mermaid-src-dashboard" style="display: none;">
+%%{init: {'theme': 'dark', 'themeVariables': { 'primaryColor': '#1a1a1a', 'primaryTextColor': '#e6e6e6', 'primaryBorderColor': '#7a9cff', 'lineColor': '#a8c0ff', 'secondaryColor': '#0d0d0d', 'tertiaryColor': '#1a1a1a', 'edgeLabelBackground': '#0d0d0d'}, 'flowchart': {'curve': 'stepAfter', 'padding': 15}}}%%
+graph TD
+    MQ["RabbitMQ 訊息佇列"] -->|接收訊息| Handler["MQ 訊息處理服務"]
+    
+    subgraph ProcessLayer [資料解析層]
+        Handler -->|步驟 1: 解析 Protobuf| ProtoData("Proto 格式資料")
+        ProtoData -->|步驟 2: 轉換為 DTO| DTOData("DTO 資料")
+        DTOData -->|步驟 3: 提取關鍵 ID 並轉換| ProcessedData("已解析業務資料")
+    end
+
+    ProcessedData -->|步驟 4: 發佈到 Redis| RedisPubSub[("Redis Pub/Sub 頻道")]
+
+    subgraph SubscribeLayer [訂閱分流層]
+        RedisPubSub -->|SUB| CacheService["資料快取服務"]
+        RedisPubSub -->|SUB| WSService["WebSocket 廣播服務"]
+        RedisPubSub -->|SUB| SaveService["資料持久化服務"]
+        RedisPubSub -->|SUB| Other["其他訂閱者"]
+    end
+
+    CacheService -->|健值對儲存 Key-Value| RedisCache[("Redis 快取資料庫")]
+    WSService -->|呼叫串流服務| StreamService["資料串流服務"]
+    SaveService -->|非同步持久化寫入| PostgresDB[("PostgreSQL 資料庫")]
+    
+    RedisCache -.->|讀取最新快取狀態| StreamService
+    StreamService -->|實時資料推播| Client(("前端 Client / WebSocket"))
+
+    classDef default fill:#1a1a1a,stroke:#7a9cff,stroke-width:1px,color:#e6e6e6;
+    classDef queue fill:#0d0d0d,stroke:#a8c0ff,stroke-width:2px,color:#a8c0ff;
+    classDef decision fill:#1a1a1a,stroke:#ffbd2e,stroke-width:1px,color:#ffbd2e;
+    
+    class MQ,RedisPubSub,RedisCache,PostgresDB queue;
+    class Client decision;
+                                    </pre>
+                                    <div id="arch-mermaid-view-dashboard"></div>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+                    <div class="output-line blank"></div>
                     <div class="output-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
                     <div class="output-line blank"></div>
 
@@ -642,6 +739,48 @@
     </div>
 
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            mermaid.initialize({
+                startOnLoad: false,
+                securityLevel: 'loose',
+                theme: 'dark'
+            });
+
+            const archDetails = document.getElementById('arch-details');
+            if (archDetails) {
+                archDetails.addEventListener('toggle', async function () {
+                    if (archDetails.open && !archDetails.dataset.rendered) {
+                        try {
+                            archDetails.dataset.rendered = "true";
+                            const src = document.getElementById('arch-mermaid-src').textContent;
+                            const { svg } = await mermaid.render('mermaid-arch-graph', src);
+                            document.getElementById('arch-mermaid-view').innerHTML = svg;
+                        } catch (e) {
+                            console.error('Mermaid render error:', e);
+                        }
+                    }
+                });
+            }
+
+            const archDetailsDashboard = document.getElementById('arch-details-dashboard');
+            if (archDetailsDashboard) {
+                archDetailsDashboard.addEventListener('toggle', async function () {
+                    if (archDetailsDashboard.open && !archDetailsDashboard.dataset.rendered) {
+                        try {
+                            archDetailsDashboard.dataset.rendered = "true";
+                            const src = document.getElementById('arch-mermaid-src-dashboard').textContent;
+                            const { svg } = await mermaid.render('mermaid-arch-graph-dashboard', src);
+                            document.getElementById('arch-mermaid-view-dashboard').innerHTML = svg;
+                        } catch (e) {
+                            console.error('Mermaid render error:', e);
+                        }
+                    }
+                });
+            }
+        });
+    </script>
     <script src="js/three_animation.js"></script>
     <script src="js/terminal.js"></script>
 </body>
